@@ -1,0 +1,28 @@
+name: Desplegar PHP en Apache
+
+on:
+  push:
+    branches:
+      - master  # Cambiar a la rama que desees desplegar
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v2
+
+      - name: Desplegar en Apache
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}  # Variable de entorno para la dirección del servidor
+          username: ${{ secrets.SERVER_USERNAME }}  # Variable de entorno para el nombre de usuario del servidor
+          key: ${{ secrets.SERVER_SSH_KEY }}  # Variable de entorno para la clave SSH del servidor
+          script: |
+            #systemctl stop httpd
+            cd /home/Git
+            git pull origin master  # Actualiza el repositorio con el código más reciente
+            cp /home/Git/phpTest/index.php /var/www/html
+            #systemctl start httpd
+            # Otros comandos para desplegar tu código PHP en Apache
