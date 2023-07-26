@@ -8,21 +8,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v2
+    - name: Check out code
+      uses: actions/checkout@v2
 
-      - name: Desplegar en Apache
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}  # Variable de entorno para la dirección del servidor
-          username: ${{ secrets.SERVER_USERNAME }}  # Variable de entorno para el nombre de usuario del servidor
-          key: ${{ secrets.SERVER_SSH_KEY }}  # Variable de entorno para la clave SSH del servidor
-          script: |
-            #systemctl stop httpd
-            cd /home/Git
-            git pull origin master  # Actualiza el repositorio con el código más reciente
-            cp /home/Git/phpTest/index.php /var/www/html
-            #systemctl start httpd
-            # Otros comandos para desplegar tu código PHP en Apache
+    - name: Configurar claves SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Desplegar en ECS de Huawei Cloud
+      run: |
+        # Coloca aquí los comandos para desplegar tu aplicación en el ECS
+        # Por ejemplo, puedes utilizar SCP o rsync para copiar los archivos al servidor
+        # Luego puedes usar SSH para ejecutar comandos en el servidor, como iniciar la aplicación.
+           scp ../phpTest/index.php root@${{ secrets.SERVER_HOST }}:/var/www/html
+            
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.TEST_SSH_KEY }}
