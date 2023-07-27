@@ -23,10 +23,8 @@ jobs:
       run: |
         # Coloca aquí los comandos para desplegar tu aplicación en el ECS
         # Por ejemplo, puedes utilizar SCP o rsync para copiar los archivos al servidor
-        # Luego puedes usar SSH para ejecutar comandos en el servidor, como iniciar la aplicación.          
-           cd /home/runner/work/
-           git pull origin master  # Actualiza el repositorio con el código más reciente  
-           scp -p /home/runner/work/phpTest/index.php ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/var/www/html
+        # Luego puedes usar SSH para ejecutar comandos en el servidor, como iniciar la aplicación.           
+           scp -p phpTest/index.php ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/var/www/html
            
     env:
       SSH_PRIVATE_KEY: ${{ secrets.TEST_SSH_KEY }}
